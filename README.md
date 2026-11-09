@@ -1,10 +1,26 @@
 # SECUREVAULT: Secure Cloud File Storage Using Advanced Encryption
 
+<div align="center">
+
+[![Live Project Website](https://img.shields.io/badge/🌐_Live_Project_Website-Click_Here_to_Launch-00C7FF?style=for-the-badge&logo=google-chrome&logoColor=black)](https://alekhyaashwini.github.io/Cloudcomputingpbl/)
+[![Source Code Repository](https://img.shields.io/badge/📂_GitHub_Repository-alekhyaashwini%2FCloudcomputingpbl-181717?style=for-the-badge&logo=github)](https://github.com/alekhyaashwini/Cloudcomputingpbl)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Cryptography: AES--256--GCM](https://img.shields.io/badge/Cipher-AES--256--GCM-green.svg)](https://csrc.nist.gov/publications/detail/sp/800-38d/final)
 [![Standards: NIST SP 800--57](https://img.shields.io/badge/Key_Model-Envelope_Encryption-purple.svg)](https://csrc.nist.gov/publications/detail/sp/800-57-part-1/rev-5/final)
 [![Cloud: Amazon S3](https://img.shields.io/badge/Storage-Amazon_S3_%2B_Local-orange.svg)](https://aws.amazon.com/s3/)
 [![Security Tests: 52 Passed](https://img.shields.io/badge/Security_Tests-52%2F52_Passing-brightgreen.svg)]()
+
+</div>
+
+---
+
+### 🌐 **Live Project Website:** [https://alekhyaashwini.github.io/Cloudcomputingpbl/](https://alekhyaashwini.github.io/Cloudcomputingpbl/)
+
+> **Instant Live Access (No Installation or Setup Required):**  
+> Access the fully interactive **SECUREVAULT** application directly in your browser using the website link above. Perform client-side AES-256-GCM file encryption, key wrapping, zero-knowledge decryption, and live tamper simulation on any device without running commands or setting up local servers.
+
+---
 
 > **A Zero-Knowledge Cloud Storage Application** engineered with **Client-Side AES-256-GCM Authenticated Encryption**, **NIST SP 800-57 Envelope Key Wrapping**, **Asymmetric RSA-OAEP Key Re-Wrapping for Multi-User Sharing**, and **Dual-Backend Storage Adapters (Amazon S3 & Local Vault)**.
 
@@ -41,11 +57,13 @@ In traditional cloud storage architectures, files are uploaded in plaintext and 
 
 ---
 
-## 🌐 Project Website & Repositories
+## 🌐 Project Website & Access Links
 
-* **Source Code Repository:** [https://github.com/alekhyaashwini/Cloudcomputingpbl](https://github.com/alekhyaashwini/Cloudcomputingpbl)
-* **Local Web Application Portal:** [http://localhost:3000](http://localhost:3000) (Interactive Full-Stack WebCrypto Application)
-* **Python Cloud Vault Portal:** [http://127.0.0.1:5000](http://127.0.0.1:5000) (Flask/FastAPI Backend Service)
+* **🌍 Official Live Project Website:** [https://alekhyaashwini.github.io/Cloudcomputingpbl/](https://alekhyaashwini.github.io/Cloudcomputingpbl/)  
+  *(Open directly in any browser for immediate evaluation without setup or terminal commands)*
+* **📁 GitHub Source Code Repository:** [https://github.com/alekhyaashwini/Cloudcomputingpbl](https://github.com/alekhyaashwini/Cloudcomputingpbl)
+* **💻 Local Full-Stack Development Mode (Optional):** [http://localhost:3000](http://localhost:3000) (when running `npm run dev`)
+* **🐍 Python Cryptography Service (Optional):** [http://127.0.0.1:5000](http://127.0.0.1:5000) (when running `python run.py`)
 
 ---
 
