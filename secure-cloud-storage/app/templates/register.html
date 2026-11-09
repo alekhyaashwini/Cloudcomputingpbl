@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Register — Secure Cloud Vault{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-4 rounded-4 shadow">
+            <h3 class="fw-bold text-center text-white mb-2">Create Vault Account</h3>
+            <p class="text-center text-secondary small mb-4">Set up your secure identity for cryptographic storage</p>
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label text-light">Username</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" id="username" name="username" required placeholder="Choose a unique username">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label text-light">Email Address</label>
+                    <input type="email" class="form-control bg-dark text-light border-secondary" id="email" name="email" required placeholder="name@college.edu">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label text-light">Password (minimum 8 characters)</label>
+                    <input type="password" class="form-control bg-dark text-light border-secondary" id="password" name="password" minlength="8" required placeholder="••••••••">
+                </div>
+                <div class="mb-4">
+                    <label for="confirm_password" class="form-label text-light">Confirm Password</label>
+                    <input type="password" class="form-control bg-dark text-light border-secondary" id="confirm_password" name="confirm_password" minlength="8" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Register & Initialize Vault</button>
+            </form>
+
+            <div class="mt-4 text-center small text-secondary">
+                Already registered? <a href="{{ url_for('auth.login') }}" class="text-info text-decoration-none">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

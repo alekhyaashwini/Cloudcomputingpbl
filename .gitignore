@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Production & Build outputs
+build/
+dist/
+coverage/
+.pytest_cache/
+
+# Storage & Databases
+vault_data/
+instance/
+*.sqlite
+*.db
+
+# Logs & Environment
+*.log
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

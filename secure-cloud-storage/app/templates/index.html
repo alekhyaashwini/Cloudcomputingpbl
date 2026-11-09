@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Secure Cloud File Storage Using Encryption{% endblock %}
+
+{% block content %}
+<div class="row align-items-center py-5">
+    <div class="col-lg-7">
+        <h1 class="display-5 fw-bold text-white mb-3">Secure Cloud File Storage Using Authenticated Encryption</h1>
+        <p class="lead text-light opacity-75 mb-4">
+            A comprehensive cybersecurity and cloud computing project. Files are encrypted with
+            <strong>AES-256-GCM</strong> (Galois/Counter Mode) with 96-bit unique nonces and 128-bit authentication tags
+            before uploading to Amazon S3 or local vaults.
+        </p>
+
+        <div class="d-flex gap-3 mb-5">
+            {% if is_authenticated %}
+                <a href="{{ url_for('files.dashboard') }}" class="btn btn-primary btn-lg px-4">Open My Vault Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Create Account</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-4 rounded-4 shadow">
+            <h5 class="text-info mb-3">Key Cryptographic Architecture</h5>
+            <ul class="list-unstyled text-light small mb-0">
+                <li class="mb-2"><strong>Cipher:</strong> AES-256-GCM (NIST SP 800-38D)</li>
+                <li class="mb-2"><strong>Integrity MAC:</strong> 128-bit GHASH Authentication Tag</li>
+                <li class="mb-2"><strong>Nonce Strategy:</strong> 96-bit CSPRNG per-file nonce</li>
+                <li class="mb-2"><strong>Key Management:</strong> PBKDF2-HMAC-SHA256 (100k rounds)</li>
+                <li class="mb-2"><strong>Storage:</strong> Amazon S3 & Local Vault Adapters</li>
+                <li><strong>Access Control:</strong> Strict Tenant File Ownership Verification</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Manage File Shares — SecureCloud{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-white mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Access Control List</h2>
+        <p class="text-secondary small mb-0">Managing access permissions for <strong>"{{ file.original_name }}"</strong></p>
+    </div>
+    <div>
+        <a href="{{ url_for('files.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- File Info Summary -->
+    <div class="col-md-4">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-4 rounded-3 shadow-sm">
+            <h5 class="fw-bold text-white mb-3"><i class="bi bi-file-earmark-lock text-warning me-2"></i>File Metadata</h5>
+            <div class="mb-2">
+                <span class="text-secondary small d-block">Original Filename:</span>
+                <span class="text-light fw-medium">{{ file.original_name }}</span>
+            </div>
+            <div class="mb-2">
+                <span class="text-secondary small d-block">SHA-256 Digest:</span>
+                <span class="text-info font-monospace small text-break">{{ file.sha256_hash }}</span>
+            </div>
+            <div class="mb-2">
+                <span class="text-secondary small d-block">Cipher:</span>
+                <span class="badge bg-success">AES-256-GCM (AEAD)</span>
+                <span class="badge bg-primary ms-1">Envelope KEK/DEK</span>
+            </div>
+            <div class="mb-2">
+                <span class="text-secondary small d-block">File Nonce (IV):</span>
+                <span class="font-monospace text-secondary small text-break">{{ file.file_nonce_hex }}</span>
+            </div>
+            <div>
+                <span class="text-secondary small d-block">Uploaded:</span>
+                <span class="text-muted small">{{ file.created_at }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Shares Table & Add Share Form -->
+    <div class="col-md-8">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-4 mb-4 rounded-3 shadow-sm">
+            <h5 class="fw-bold text-white mb-3"><i class="bi bi-person-plus text-success me-2"></i>Grant Share Access</h5>
+            <form action="{{ url_for('files.share', file_id=file.id) }}" method="POST" class="row g-2">
+                <div class="col-md-7">
+                    <input type="text" name="recipient" class="form-control bg-dark text-light border-secondary" placeholder="Enter recipient username or email..." required>
+                </div>
+                <div class="col-md-3">
+                    <select name="duration_hours" class="form-select bg-dark text-light border-secondary">
+                        <option value="0">No Expiry</option>
+                        <option value="24">24 Hours</option>
+                        <option value="168">7 Days</option>
+                        <option value="720">30 Days</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold text-nowrap">
+                        <i class="bi bi-check2-circle me-1"></i> Share
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card bg-secondary bg-opacity-25 border-secondary rounded-3 shadow-sm">
+            <div class="card-header bg-transparent border-secondary py-3">
+                <h6 class="fw-bold text-white mb-0"><i class="bi bi-person-check text-info me-2"></i>Authorized Users with Decryption Permissions</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Status / Expiry</th>
+                            <th>Granted Date</th>
+                            <th class="text-end">Revoke Access</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if shares %}
+                            {% for s in shares %}
+                            <tr>
+                                <td>
+                                    <i class="bi bi-person-circle me-1 text-primary"></i><strong>{{ s.username }}</strong>
+                                    <div class="text-secondary small">{{ s.email }}</div>
+                                </td>
+                                <td>
+                                    {% if s.is_revoked %}
+                                        <span class="badge bg-danger">Revoked</span>
+                                    {% elif s.expires_at %}
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                            Expires: {{ s.expires_at }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Active (Permanent)</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-secondary small">{{ s.created_at }}</td>
+                                <td class="text-end">
+                                    {% if not s.is_revoked %}
+                                    <form action="{{ url_for('files.revoke_share', share_id=s.share_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Revoke this user\'s access to decrypt this file?');">
+                                        <input type="hidden" name="file_id" value="{{ file.id }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x-circle me-1"></i> Revoke
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                        <span class="text-muted small">Access Terminated</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-secondary">
+                                    <p class="mb-0">This file is private to you and has not been shared with any other user.</p>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Security Center & Audit Trail — SecureCloud{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-white mb-1"><i class="bi bi-shield-check text-success me-2"></i>Security Center & Audit Trail</h2>
+        <p class="text-secondary small mb-0">Cryptographic parameter verification, envelope key hierarchy, and immutable audit logging</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('security.export_audit_logs') }}" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-download me-1"></i> Export Audit Logs (CSV)
+        </a>
+        <a href="{{ url_for('files.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Architecture & Cryptography Overview Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-3 rounded-3 shadow-sm h-100">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-key-fill text-warning fs-4"></i>
+                <h6 class="fw-bold text-white mb-0">Cryptographic Standard</h6>
+            </div>
+            <ul class="list-unstyled small text-secondary mb-0">
+                <li><strong class="text-light">Payload Cipher:</strong> AES-256-GCM (NIST SP 800-38D)</li>
+                <li><strong class="text-light">Key Model:</strong> Envelope Encryption (KEK + DEK)</li>
+                <li><strong class="text-light">Nonce Policy:</strong> 96-bit (12B) CSPRNG unique nonces</li>
+                <li><strong class="text-light">Integrity Tag:</strong> 128-bit (16B) GHASH MAC tag</li>
+                <li><strong class="text-light">Key Derivation:</strong> PBKDF2-HMAC-SHA256 (100k rounds)</li>
+                <li><strong class="text-light">Integrity Hash:</strong> SHA-256 Plaintext Fingerprint</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-3 rounded-3 shadow-sm h-100">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-cloud-check-fill text-primary fs-4"></i>
+                <h6 class="fw-bold text-white mb-0">Cloud Storage Adapter</h6>
+            </div>
+            <ul class="list-unstyled small text-secondary mb-0">
+                <li><strong class="text-light">Active Backend:</strong> <span class="badge bg-primary">{{ storage_backend }}</span></li>
+                <li><strong class="text-light">Bucket / Path:</strong> <span class="text-info font-monospace small text-break">{{ bucket_or_path }}</span></li>
+                <li><strong class="text-light">Data at Rest:</strong> Strictly high-entropy ciphertext (.enc)</li>
+                <li><strong class="text-light">Access Security:</strong> 100% Private (No public URLs)</li>
+                <li><strong class="text-light">Transport:</strong> TLS 1.3 encrypted channel</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-secondary bg-opacity-25 border-secondary p-3 rounded-3 shadow-sm h-100">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-activity text-info fs-4"></i>
+                <h6 class="fw-bold text-white mb-0">Audit Monitor Metrics</h6>
+            </div>
+            <div class="row g-2 mt-1">
+                <div class="col-6">
+                    <div class="p-2 rounded bg-dark border border-secondary text-center">
+                        <span class="text-secondary small d-block">Total Events</span>
+                        <span class="fw-bold text-light fs-5">{{ total_events }}</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-2 rounded bg-dark border border-secondary text-center">
+                        <span class="text-secondary small d-block">Security Alerts</span>
+                        <span class="fw-bold text-danger fs-5">{{ security_alerts }}</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-2 rounded bg-dark border border-secondary text-center">
+                        <span class="text-secondary small d-block">Successful Ops</span>
+                        <span class="fw-bold text-success fs-5">{{ successful_ops }}</span>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-2 rounded bg-dark border border-secondary text-center">
+                        <span class="text-secondary small d-block">Warnings</span>
+                        <span class="fw-bold text-warning fs-5">{{ warnings }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Security Audit Log Table with Filter -->
+<div class="card bg-secondary bg-opacity-25 border-secondary rounded-3 shadow-sm">
+    <div class="card-header bg-transparent border-secondary py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <h5 class="fw-bold text-white mb-0"><i class="bi bi-journal-text me-2 text-primary"></i>Security Audit Log</h5>
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-secondary small">Filter:</span>
+            <select class="form-select form-select-sm bg-dark text-light border-secondary" style="width: auto;" onchange="location = this.value;">
+                <option value="{{ url_for('security.index') }}">All Events</option>
+                <option value="{{ url_for('security.index', event_type='FILE_UPLOAD_ENCRYPTED') }}" {% if selected_event == 'FILE_UPLOAD_ENCRYPTED' %}selected{% endif %}>Uploads</option>
+                <option value="{{ url_for('security.index', event_type='FILE_DOWNLOAD_DECRYPTED') }}" {% if selected_event == 'FILE_DOWNLOAD_DECRYPTED' %}selected{% endif %}>Downloads</option>
+                <option value="{{ url_for('security.index', event_type='INTEGRITY_VIOLATION_TAMPERING') }}" {% if selected_event == 'INTEGRITY_VIOLATION_TAMPERING' %}selected{% endif %}>Tamper Alerts</option>
+                <option value="{{ url_for('security.index', event_type='AUTH_LOGIN_SUCCESS') }}" {% if selected_event == 'AUTH_LOGIN_SUCCESS' %}selected{% endif %}>Logins</option>
+                <option value="{{ url_for('security.index', event_type='FILE_SHARED') }}" {% if selected_event == 'FILE_SHARED' %}selected{% endif %}>Sharing</option>
+            </select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0 align-middle">
+            <thead class="table-secondary">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Actor / User</th>
+                    <th>Event Type</th>
+                    <th>Audit Details</th>
+                    <th>IP Address</th>
+                    <th class="text-end">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if audit_logs %}
+                    {% for log in audit_logs %}
+                    <tr>
+                        <td class="text-secondary small font-monospace">{{ log.created_at }}</td>
+                        <td>
+                            <i class="bi bi-person-fill text-muted me-1"></i>
+                            <span class="fw-medium text-light">{{ log.username }}</span>
+                        </td>
+                        <td>
+                            <span class="font-monospace small text-info">{{ log.event_type }}</span>
+                        </td>
+                        <td class="small text-light">{{ log.details }}</td>
+                        <td class="text-secondary font-monospace small">{{ log.ip_address }}</td>
+                        <td class="text-end">
+                            {% if log.status == 'SUCCESS' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">SUCCESS</span>
+                            {% elif log.status == 'SECURITY_ALERT' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle"><i class="bi bi-shield-slash me-1"></i>ALERT</span>
+                            {% elif log.status == 'WARNING' %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">WARNING</span>
+                            {% else %}
+                                <span class="badge bg-secondary">INFO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-secondary">
+                            No security audit logs recorded matching criteria.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
