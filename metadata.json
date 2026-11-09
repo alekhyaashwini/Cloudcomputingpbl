@@ -2,5 +2,5 @@
   "name": "Secure Cloud File Storage (AES-256-GCM)",
   "description": "College PBL project featuring AES-256-GCM authenticated encryption for cloud file storage, AWS S3 and local vault adapters, cryptographic integrity verification, multi-user access control, and complete documentation.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }
